@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-bg: #fafaf8;
+            --color-accent: #2a5a4a;
+            --color-text: #1a1a1a;
+            --color-subtle: #666;
+            --color-highlight: #d4a574;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Decorative element */
+        .accent-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100vh;
+            background: linear-gradient(180deg, var(--color-accent), var(--color-highlight));
+            z-index: 100;
+        }
+
+        header {
+            padding: 3rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--color-accent);
+            letter-spacing: -1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .tagline {
+            font-size: 0.9rem;
+            color: var(--color-subtle);
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .hero {
+            padding: 4rem 0;
+            border-bottom: 1px solid rgba(42, 90, 74, 0.2);
+            margin-bottom: 4rem;
+            animation: fadeIn 1s ease-out 0.3s backwards;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: var(--color-text);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--color-subtle);
+            max-width: 600px;
+            font-weight: 300;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 2px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            transition: all 0.4s ease;
+            animation: fadeInUp 0.6s ease-out backwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.5s; }
+        .card:nth-child(2) { animation-delay: 0.6s; }
+        .card:nth-child(3) { animation-delay: 0.7s; }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-accent), var(--color-highlight));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--color-accent);
+        }
+
+        .card p {
+            color: var(--color-subtle);
+            font-weight: 300;
+            line-height: 1.7;
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: 4rem 0;
+            animation: fadeIn 1s ease-out 0.8s backwards;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 3rem;
+            background: var(--color-accent);
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--color-highlight);
+            transition: left 0.4s ease;
+            z-index: -1;
+        }
+
+        .cta-button:hover::before {
+            left: 0;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid rgba(42, 90, 74, 0.2);
+            color: var(--color-subtle);
+            font-size: 0.9rem;
+            animation: fadeIn 1s ease-out 1s backwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="accent-bar"></div>
+    
+    <header>
+        <div class="logo">Essence</div>
+        <div class="tagline">Simple & Elegant</div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>Welcome to Your<br>Digital Space</h1>
+            <p>A clean, thoughtfully designed starting point for your web presence. Simple, elegant, and ready to be made your own.</p>
+        </section>
+
+        <div class="content-grid">
+            <div class="card">
+                <h2>Modern Design</h2>
+                <p>Clean lines and thoughtful spacing create a contemporary aesthetic that puts your content first. Every element serves a purpose.</p>
+            </div>
+
+            <div class="card">
+                <h2>Fully Responsive</h2>
+                <p>Beautiful on every device, from smartphones to large displays. Your site adapts seamlessly to any screen size.</p>
+            </div>
+
+            <div class="card">
+                <h2>Easy to Customize</h2>
+                <p>Built with simple, well-organized code. Change colors, fonts, and content with ease to match your unique style.</p>
+            </div>
+        </div>
+
+        <section class="cta-section">
+            <a href="#" class="cta-button">Get Started</a>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Essence. Crafted with care.</p>
+    </footer>
+</body>
+</html>
