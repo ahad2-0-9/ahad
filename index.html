@@ -1,291 +1,405 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --color-bg: #fafaf8;
-            --color-accent: #2a5a4a;
-            --color-text: #1a1a1a;
-            --color-subtle: #666;
-            --color-highlight: #d4a574;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Not Another Thriftstore - Order & Profit Tracker</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --danger: #dc2626;
+      --success: #059669;
+      --border: #e5e7eb;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    * { box-sizing: border-box; }
 
-        body {
-            font-family: 'Work Sans', sans-serif;
-            background: var(--color-bg);
-            color: var(--color-text);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
 
-        /* Decorative element */
-        .accent-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100vh;
-            background: linear-gradient(180deg, var(--color-accent), var(--color-highlight));
-            z-index: 100;
-        }
+    .container {
+      max-width: 1100px;
+      margin: 24px auto;
+      padding: 0 16px 24px;
+    }
 
-        header {
-            padding: 3rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            animation: fadeInDown 0.8s ease-out;
-        }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
 
-        .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            font-weight: 900;
-            color: var(--color-accent);
-            letter-spacing: -1px;
-            margin-bottom: 0.5rem;
-        }
+    h1 { margin: 0 0 8px; }
+    h2 { margin: 0 0 12px; font-size: 1.1rem; }
+    .muted { color: var(--muted); }
 
-        .tagline {
-            font-size: 0.9rem;
-            color: var(--color-subtle);
-            font-weight: 300;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
 
-        main {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem 4rem;
-        }
+    label {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
 
-        .hero {
-            padding: 4rem 0;
-            border-bottom: 1px solid rgba(42, 90, 74, 0.2);
-            margin-bottom: 4rem;
-            animation: fadeIn 1s ease-out 0.3s backwards;
-        }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      background: #fff;
+    }
 
-        .hero h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 3.5rem;
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-            color: var(--color-text);
-        }
+    button {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+    }
 
-        .hero p {
-            font-size: 1.2rem;
-            color: var(--color-subtle);
-            max-width: 600px;
-            font-weight: 300;
-        }
+    button:hover { opacity: 0.95; }
+    button.delete { background: var(--danger); border-color: var(--danger); }
 
-        .content-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
-            margin-bottom: 4rem;
-        }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
 
-        .card {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 2px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-            transition: all 0.4s ease;
-            animation: fadeInUp 0.6s ease-out backwards;
-            position: relative;
-            overflow: hidden;
-        }
+    .summary-item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      background: #fafafa;
+    }
 
-        .card:nth-child(1) { animation-delay: 0.5s; }
-        .card:nth-child(2) { animation-delay: 0.6s; }
-        .card:nth-child(3) { animation-delay: 0.7s; }
+    .summary-item strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 1.1rem;
+    }
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--color-accent), var(--color-highlight));
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.4s ease;
-        }
+    .profit-positive { color: var(--success); }
+    .profit-negative { color: var(--danger); }
 
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.92rem;
+    }
 
-        .card:hover::before {
-            transform: scaleX(1);
-        }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
 
-        .card h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            color: var(--color-accent);
-        }
+    .table-wrap {
+      overflow-x: auto;
+    }
 
-        .card p {
-            color: var(--color-subtle);
-            font-weight: 300;
-            line-height: 1.7;
-        }
+    .status {
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      display: inline-block;
+      border: 1px solid;
+    }
 
-        .cta-section {
-            text-align: center;
-            padding: 4rem 0;
-            animation: fadeIn 1s ease-out 0.8s backwards;
-        }
+    .status-dispatched {
+      color: var(--success);
+      border-color: #a7f3d0;
+      background: #ecfdf5;
+    }
 
-        .cta-button {
-            display: inline-block;
-            padding: 1rem 3rem;
-            background: var(--color-accent);
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
+    .status-pending {
+      color: #b45309;
+      border-color: #fcd34d;
+      background: #fffbeb;
+    }
 
-        .cta-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: var(--color-highlight);
-            transition: left 0.4s ease;
-            z-index: -1;
-        }
-
-        .cta-button:hover::before {
-            left: 0;
-        }
-
-        .cta-button:hover {
-            transform: scale(1.05);
-        }
-
-        footer {
-            text-align: center;
-            padding: 3rem 2rem;
-            border-top: 1px solid rgba(42, 90, 74, 0.2);
-            color: var(--color-subtle);
-            font-size: 0.9rem;
-            animation: fadeIn 1s ease-out 1s backwards;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            .logo {
-                font-size: 2rem;
-            }
-
-            .content-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-        }
-    </style>
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      min-width: 180px;
+    }
+  </style>
 </head>
 <body>
-    <div class="accent-bar"></div>
-    
-    <header>
-        <div class="logo">Essence</div>
-        <div class="tagline">Simple & Elegant</div>
-    </header>
+  <div class="container">
+    <div class="card">
+      <h1>Not Another Thriftstore</h1>
+      <p class="muted">Track orders, costs, revenue, dispatch status, and monthly profit totals.</p>
+    </div>
 
-    <main>
-        <section class="hero">
-            <h1>Welcome to Your<br>Digital Space</h1>
-            <p>A clean, thoughtfully designed starting point for your web presence. Simple, elegant, and ready to be made your own.</p>
-        </section>
-
-        <div class="content-grid">
-            <div class="card">
-                <h2>Modern Design</h2>
-                <p>Clean lines and thoughtful spacing create a contemporary aesthetic that puts your content first. Every element serves a purpose.</p>
-            </div>
-
-            <div class="card">
-                <h2>Fully Responsive</h2>
-                <p>Beautiful on every device, from smartphones to large displays. Your site adapts seamlessly to any screen size.</p>
-            </div>
-
-            <div class="card">
-                <h2>Easy to Customize</h2>
-                <p>Built with simple, well-organized code. Change colors, fonts, and content with ease to match your unique style.</p>
-            </div>
+    <div class="card">
+      <h2>Punch a New Order</h2>
+      <form id="orderForm" class="grid">
+        <div>
+          <label for="customerName">Customer Name</label>
+          <input id="customerName" name="customerName" required />
         </div>
+        <div>
+          <label for="itemName">Item</label>
+          <input id="itemName" name="itemName" required />
+        </div>
+        <div>
+          <label for="orderDate">Order Date</label>
+          <input id="orderDate" name="orderDate" type="date" required />
+        </div>
+        <div>
+          <label for="cost">Cost</label>
+          <input id="cost" name="cost" type="number" min="0" step="0.01" required />
+        </div>
+        <div>
+          <label for="revenue">Sale Price</label>
+          <input id="revenue" name="revenue" type="number" min="0" step="0.01" required />
+        </div>
+        <div>
+          <label for="dispatched">Dispatch Status</label>
+          <select id="dispatched" name="dispatched">
+            <option value="false">Not Dispatched</option>
+            <option value="true">Dispatched</option>
+          </select>
+        </div>
+        <div style="align-self:end;">
+          <button type="submit">Add Order</button>
+        </div>
+      </form>
+    </div>
 
-        <section class="cta-section">
-            <a href="#" class="cta-button">Get Started</a>
-        </section>
-    </main>
+    <div class="card">
+      <h2>Month-End Summary</h2>
+      <div class="grid" style="margin-bottom: 12px;">
+        <div>
+          <label for="summaryMonth">Select Month</label>
+          <input id="summaryMonth" type="month" />
+        </div>
+      </div>
+      <div class="summary-grid">
+        <div class="summary-item">
+          Total Cost
+          <strong id="totalCost">$0.00</strong>
+        </div>
+        <div class="summary-item">
+          Total Revenue
+          <strong id="totalRevenue">$0.00</strong>
+        </div>
+        <div class="summary-item">
+          Total Profit
+          <strong id="totalProfit">$0.00</strong>
+        </div>
+      </div>
+    </div>
 
-    <footer>
-        <p>&copy; 2025 Essence. Crafted with care.</p>
-    </footer>
+    <div class="card">
+      <h2>Orders</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Order #</th>
+              <th>Customer</th>
+              <th>Item</th>
+              <th>Date</th>
+              <th>Cost</th>
+              <th>Revenue</th>
+              <th>Profit</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'not-another-thriftstore-orders';
+
+    const form = document.getElementById('orderForm');
+    const tableBody = document.getElementById('ordersTableBody');
+    const monthInput = document.getElementById('summaryMonth');
+    const totalCostEl = document.getElementById('totalCost');
+    const totalRevenueEl = document.getElementById('totalRevenue');
+    const totalProfitEl = document.getElementById('totalProfit');
+
+    function getDefaultMonth() {
+      const now = new Date();
+      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    }
+
+    function getOrders() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        return data ? JSON.parse(data) : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveOrders(orders) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+    }
+
+    function currency(value) {
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value || 0);
+    }
+
+    function generateOrderNumber() {
+      const now = new Date();
+      const stamp = now.toISOString().replace(/[-:.TZ]/g, '').slice(0, 14);
+      const random = Math.floor(Math.random() * 9000 + 1000);
+      return `NATS-${stamp}-${random}`;
+    }
+
+    function parseNumber(value) {
+      const num = Number(value);
+      return Number.isFinite(num) ? num : 0;
+    }
+
+    function createCell(text, className) {
+      const cell = document.createElement('td');
+      cell.textContent = text;
+      if (className) cell.className = className;
+      return cell;
+    }
+
+    function render() {
+      const orders = getOrders();
+      const selectedMonth = monthInput.value || getDefaultMonth();
+
+      tableBody.innerHTML = '';
+
+      for (const order of orders) {
+        const row = document.createElement('tr');
+        const profit = order.revenue - order.cost;
+        row.appendChild(createCell(order.orderNumber));
+        row.appendChild(createCell(order.customerName));
+        row.appendChild(createCell(order.itemName));
+        row.appendChild(createCell(order.orderDate));
+        row.appendChild(createCell(currency(order.cost)));
+        row.appendChild(createCell(currency(order.revenue)));
+        row.appendChild(createCell(currency(profit), profit >= 0 ? 'profit-positive' : 'profit-negative'));
+
+        const statusCell = document.createElement('td');
+        const status = document.createElement('span');
+        status.className = `status ${order.dispatched ? 'status-dispatched' : 'status-pending'}`;
+        status.textContent = order.dispatched ? 'Dispatched' : 'Not Dispatched';
+        statusCell.appendChild(status);
+        row.appendChild(statusCell);
+
+        const actionsCell = document.createElement('td');
+        const actions = document.createElement('div');
+        actions.className = 'actions';
+
+        const toggleButton = document.createElement('button');
+        toggleButton.type = 'button';
+        toggleButton.dataset.action = 'toggle';
+        toggleButton.dataset.id = order.id;
+        toggleButton.textContent = 'Toggle Status';
+
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.dataset.action = 'delete';
+        deleteButton.dataset.id = order.id;
+        deleteButton.className = 'delete';
+        deleteButton.textContent = 'Delete';
+
+        actions.appendChild(toggleButton);
+        actions.appendChild(deleteButton);
+        actionsCell.appendChild(actions);
+        row.appendChild(actionsCell);
+        tableBody.appendChild(row);
+      }
+
+      const monthlyOrders = orders.filter((order) => order.orderDate.startsWith(selectedMonth));
+      const totalCost = monthlyOrders.reduce((sum, order) => sum + order.cost, 0);
+      const totalRevenue = monthlyOrders.reduce((sum, order) => sum + order.revenue, 0);
+      const totalProfit = totalRevenue - totalCost;
+
+      totalCostEl.textContent = currency(totalCost);
+      totalRevenueEl.textContent = currency(totalRevenue);
+      totalProfitEl.textContent = currency(totalProfit);
+      totalProfitEl.className = totalProfit >= 0 ? 'profit-positive' : 'profit-negative';
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(form);
+      const newOrder = {
+        id: crypto.randomUUID(),
+        orderNumber: generateOrderNumber(),
+        customerName: String(formData.get('customerName') || '').trim(),
+        itemName: String(formData.get('itemName') || '').trim(),
+        orderDate: String(formData.get('orderDate') || ''),
+        cost: parseNumber(formData.get('cost')),
+        revenue: parseNumber(formData.get('revenue')),
+        dispatched: String(formData.get('dispatched')) === 'true'
+      };
+
+      if (!newOrder.customerName || !newOrder.itemName || !newOrder.orderDate) {
+        return;
+      }
+
+      const orders = getOrders();
+      orders.unshift(newOrder);
+      saveOrders(orders);
+      form.reset();
+      document.getElementById('orderDate').value = new Date().toISOString().split('T')[0];
+      render();
+    });
+
+    tableBody.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLButtonElement)) return;
+
+      const action = target.dataset.action;
+      const id = target.dataset.id;
+      if (!action || !id) return;
+
+      const orders = getOrders();
+      const index = orders.findIndex((o) => o.id === id);
+      if (index === -1) return;
+
+      if (action === 'toggle') {
+        orders[index].dispatched = !orders[index].dispatched;
+      }
+
+      if (action === 'delete') {
+        orders.splice(index, 1);
+      }
+
+      saveOrders(orders);
+      render();
+    });
+
+    monthInput.addEventListener('change', render);
+
+    monthInput.value = getDefaultMonth();
+    document.getElementById('orderDate').value = new Date().toISOString().split('T')[0];
+    render();
+  </script>
 </body>
 </html>
