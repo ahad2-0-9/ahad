@@ -407,8 +407,8 @@
         <label for="searchQ">Search</label>
         <input id="searchQ" placeholder="Order ID, customer name, item, address…" autocomplete="off" />
       </div>
-      <button class="btn-cyan" onclick="doSearch()">Search</button>
-      <button class="btn-ghost" onclick="clearSearch()">Clear</button>
+      <button id="btn-search" class="btn-cyan">Search</button>
+      <button id="btn-clear" class="btn-ghost">Clear</button>
     </div>
   </div>
 
@@ -759,6 +759,8 @@ function clearSearch() {
 document.getElementById('searchQ').addEventListener('keydown', e => {
   if (e.key === 'Enter') doSearch();
 });
+document.getElementById('btn-search').addEventListener('click', doSearch);
+document.getElementById('btn-clear').addEventListener('click', clearSearch);
 
 /* ── Form submit ──────────────────────────────────────────────── */
 const form = document.getElementById('orderForm');
