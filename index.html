@@ -43,6 +43,7 @@
     h1 { margin: 0 0 8px; }
     h2 { margin: 0 0 12px; font-size: 1.1rem; }
     .muted { color: var(--muted); }
+    .error { color: var(--danger); margin-top: 8px; font-size: 0.9rem; }
 
     .grid {
       display: grid;
@@ -185,6 +186,7 @@
           <button type="submit">Add Order</button>
         </div>
       </form>
+      <p id="formError" class="error" role="alert" aria-live="polite"></p>
     </div>
 
     <div class="card">
@@ -192,7 +194,7 @@
       <div class="grid" style="margin-bottom: 12px;">
         <div>
           <label for="summaryMonth">Select Month</label>
-          <input id="summaryMonth" type="month" />
+          <input id="summaryMonth" name="summaryMonth" type="month" aria-label="Select Month" />
         </div>
       </div>
       <div class="summary-grid">
@@ -236,23 +238,49 @@
 
   <script>
     const STORAGE_KEY = 'not-another-thriftstore-orders';
+    const ORDER_TIMESTAMP_LENGTH = 17;
+    const ORDER_SUFFIX_LENGTH = 8;
 
     const form = document.getElementById('orderForm');
+    const orderDateInput = document.getElementById('orderDate');
     const tableBody = document.getElementById('ordersTableBody');
     const monthInput = document.getElementById('summaryMonth');
     const totalCostEl = document.getElementById('totalCost');
     const totalRevenueEl = document.getElementById('totalRevenue');
     const totalProfitEl = document.getElementById('totalProfit');
+    const formError = document.getElementById('formError');
 
     function getDefaultMonth() {
       const now = new Date();
       return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     }
 
+    function getCurrentDateString() {
+      return new Date().toISOString().split('T')[0];
+    }
+
+    function isValidISODate(value) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+      const date = new Date(`${value}T00:00:00Z`);
+      return !Number.isNaN(date.getTime()) && date.toISOString().startsWith(value);
+    }
+
     function getOrders() {
       try {
         const data = localStorage.getItem(STORAGE_KEY);
-        return data ? JSON.parse(data) : [];
+        const parsed = data ? JSON.parse(data) : [];
+        if (!Array.isArray(parsed)) return [];
+        return parsed.filter((order) => {
+          if (!order || typeof order !== 'object') return false;
+          const validDate = typeof order.orderDate === 'string' && isValidISODate(order.orderDate);
+          const validNums = Number.isFinite(Number(order.cost)) && Number.isFinite(Number(order.revenue));
+          return validDate && validNums;
+        }).map((order) => ({
+          ...order,
+          cost: Number(order.cost),
+          revenue: Number(order.revenue),
+          dispatched: Boolean(order.dispatched)
+        }));
       } catch {
         return [];
       }
@@ -266,11 +294,17 @@
       return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value || 0);
     }
 
-    function generateOrderNumber() {
+    function generateOrderNumber(existingNumbers) {
       const now = new Date();
-      const stamp = now.toISOString().replace(/[-:.TZ]/g, '').slice(0, 14);
-      const random = Math.floor(Math.random() * 9000 + 1000);
-      return `NATS-${stamp}-${random}`;
+      // Keep YYYYMMDDHHmmssSSS for readable timestamp plus milliseconds.
+      const stamp = now.toISOString().replace(/[-:.TZ]/g, '').slice(0, ORDER_TIMESTAMP_LENGTH);
+      let orderNumber = '';
+      do {
+        // Append UUID chars for stronger uniqueness while keeping readable timestamp.
+        const suffix = crypto.randomUUID().replace(/-/g, '').slice(0, ORDER_SUFFIX_LENGTH).toUpperCase();
+        orderNumber = `NATS-${stamp}-${suffix}`;
+      } while (existingNumbers.has(orderNumber));
+      return orderNumber;
     }
 
     function parseNumber(value) {
@@ -346,11 +380,14 @@
 
     form.addEventListener('submit', (event) => {
       event.preventDefault();
+      formError.textContent = '';
+      const orders = getOrders();
+      const orderNumbers = new Set(orders.map((order) => order.orderNumber));
 
       const formData = new FormData(form);
       const newOrder = {
         id: crypto.randomUUID(),
-        orderNumber: generateOrderNumber(),
+        orderNumber: generateOrderNumber(orderNumbers),
         customerName: String(formData.get('customerName') || '').trim(),
         itemName: String(formData.get('itemName') || '').trim(),
         orderDate: String(formData.get('orderDate') || ''),
@@ -360,14 +397,14 @@
       };
 
       if (!newOrder.customerName || !newOrder.itemName || !newOrder.orderDate) {
+        formError.textContent = 'Please enter customer name, item, and order date.';
         return;
       }
 
-      const orders = getOrders();
       orders.unshift(newOrder);
       saveOrders(orders);
       form.reset();
-      document.getElementById('orderDate').value = new Date().toISOString().split('T')[0];
+      orderDateInput.value = getCurrentDateString();
       render();
     });
 
@@ -398,7 +435,7 @@
     monthInput.addEventListener('change', render);
 
     monthInput.value = getDefaultMonth();
-    document.getElementById('orderDate').value = new Date().toISOString().split('T')[0];
+    orderDateInput.value = getCurrentDateString();
     render();
   </script>
 </body>
