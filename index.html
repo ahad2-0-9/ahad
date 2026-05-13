@@ -217,11 +217,12 @@
       <p class="sub">Minimal app, daily tracking, and next-day reminders for missed tasks.</p>
       <form id="taskForm" class="row">
         <label for="taskInput" class="sr-only">Task title</label>
-        <input id="taskInput" maxlength="180" placeholder="Add a task you need to do" required />
+        <input id="taskInput" maxlength="180" placeholder="Add a task you need to do" aria-describedby="taskCount" required />
         <label for="dueInput" class="sr-only">Due date</label>
         <input id="dueInput" type="date" />
         <button type="submit">Add Task</button>
       </form>
+      <p id="taskCount" class="sub" aria-live="polite">0/180</p>
       <div class="toolbar">
         <button type="button" class="btn-ghost" id="showAll">All</button>
         <button type="button" class="btn-ghost" id="showOpen">Open</button>
@@ -309,11 +310,12 @@
       const li = document.createElement('li');
       li.className = 'task new-task' + (task.done ? ' done' : '');
       li.dataset.id = task.id;
+      const readableTitle = readableTaskTitle(task.title);
 
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
       checkbox.checked = task.done;
-      checkbox.setAttribute('aria-label', `Mark ${task.title} as done`);
+      checkbox.setAttribute('aria-label', `Mark task ${readableTitle} as done`);
 
       const content = document.createElement('div');
       const title = document.createElement('p');
@@ -338,6 +340,7 @@
       delBtn.type = 'button';
       delBtn.className = 'btn-ghost';
       delBtn.textContent = 'Delete';
+      delBtn.setAttribute('aria-label', `Delete task ${readableTitle}`);
 
       checkbox.addEventListener('change', () => toggleTaskDone(task.id, li));
       delBtn.addEventListener('click', () => deleteTask(task.id));
@@ -484,6 +487,17 @@
       render();
     }
 
+    function readableTaskTitle(title) {
+      const text = String(title || 'task').replace(/\s+/g, ' ').trim();
+      if (text.length <= 60) return `"${text}"`;
+      return `"${text.slice(0, 59)}…"`;
+    }
+
+    function updateTaskCount() {
+      const current = taskInput.value.length;
+      document.getElementById('taskCount').textContent = `${current}/180`;
+    }
+
     taskForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const title = taskInput.value.trim();
@@ -492,8 +506,11 @@
       addTask(title, dueDate);
       taskInput.value = '';
       dueInput.value = '';
+      updateTaskCount();
       taskInput.focus();
     });
+
+    taskInput.addEventListener('input', updateTaskCount);
 
     document.getElementById('showAll').addEventListener('click', () => { filterMode = 'all'; render(); });
     document.getElementById('showOpen').addEventListener('click', () => { filterMode = 'open'; render(); });
@@ -525,6 +542,7 @@
     });
 
     dueInput.value = '';
+    updateTaskCount();
     render();
   </script>
 </body>
