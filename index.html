@@ -280,7 +280,14 @@
     function parseDate(dateStr) {
       const [y, m, d] = (dateStr || '').split('-').map(Number);
       if (!y || !m || !d) return null;
-      return new Date(y, m - 1, d);
+      const date = new Date(y, m - 1, d);
+      if (
+        Number.isNaN(date.getTime()) ||
+        date.getFullYear() !== y ||
+        date.getMonth() !== (m - 1) ||
+        date.getDate() !== d
+      ) return null;
+      return date;
     }
 
     function loadState() {
@@ -288,6 +295,9 @@
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return { tasks: [], dailyLog: {} };
         const parsed = JSON.parse(raw);
+        if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+          return { tasks: [], dailyLog: {} };
+        }
         if (
           !Array.isArray(parsed.tasks) ||
           typeof parsed.dailyLog !== 'object' ||
@@ -325,7 +335,9 @@
       const meta = document.createElement('p');
       meta.className = 'task-meta';
       const dueText = task.dueDate ? `Due: ${task.dueDate}` : 'No due date';
-      const overdue = !task.done && task.dueDate && parseDate(task.dueDate) < parseDate(todayStr());
+      const dueDate = parseDate(task.dueDate);
+      const today = parseDate(todayStr());
+      const overdue = !task.done && dueDate && today && dueDate < today;
       if (overdue) {
         meta.classList.add('late');
         meta.textContent = `${dueText} · Missed`;
@@ -354,15 +366,15 @@
     function addToDailyLog(state, task) {
       const day = todayStr();
       if (!state.dailyLog[day]) state.dailyLog[day] = [];
-      const exists = state.dailyLog[day].some((item) => item.taskId === task.id);
+      const exists = state.dailyLog[day].some((item) => (item.id ?? item.taskId) === task.id);
       if (!exists) {
-        state.dailyLog[day].unshift({ taskId: task.id, title: task.title, completedAt: new Date().toISOString() });
+        state.dailyLog[day].unshift({ id: task.id, title: task.title, completedAt: new Date().toISOString() });
       }
     }
 
     function removeFromDailyLog(state, taskId) {
       for (const day of Object.keys(state.dailyLog)) {
-        state.dailyLog[day] = state.dailyLog[day].filter((item) => item.taskId !== taskId);
+        state.dailyLog[day] = state.dailyLog[day].filter((item) => (item.id ?? item.taskId) !== taskId);
         if (state.dailyLog[day].length === 0) delete state.dailyLog[day];
       }
     }
@@ -395,7 +407,11 @@
 
     function renderReminder(tasks) {
       const today = parseDate(todayStr());
-      const missed = tasks.filter((t) => !t.done && t.dueDate && parseDate(t.dueDate) < today);
+      const missed = tasks.filter((t) => {
+        if (t.done || !t.dueDate || !today) return false;
+        const dueDate = parseDate(t.dueDate);
+        return dueDate ? dueDate < today : false;
+      });
       reminderList.innerHTML = '';
 
       if (missed.length === 0) {
@@ -458,10 +474,12 @@
 
       tasks.sort((a, b) => {
         if (!!a.done !== !!b.done) return a.done ? 1 : -1;
-        if (!a.dueDate && !b.dueDate) return 0;
-        if (!a.dueDate) return 1;
-        if (!b.dueDate) return -1;
-        return a.dueDate < b.dueDate ? -1 : 1;
+        const aDate = parseDate(a.dueDate);
+        const bDate = parseDate(b.dueDate);
+        if (!aDate && !bDate) return 0;
+        if (!aDate) return 1;
+        if (!bDate) return -1;
+        return aDate.getTime() - bDate.getTime();
       });
 
       for (const task of tasks) {
@@ -521,7 +539,7 @@
       const doneIds = new Set(state.tasks.filter((t) => t.done).map((t) => t.id));
       state.tasks = state.tasks.filter((t) => !doneIds.has(t.id));
       Object.keys(state.dailyLog).forEach((day) => {
-        state.dailyLog[day] = state.dailyLog[day].filter((entry) => !doneIds.has(entry.taskId));
+        state.dailyLog[day] = state.dailyLog[day].filter((entry) => !doneIds.has(entry.id ?? entry.taskId));
         if (state.dailyLog[day].length === 0) delete state.dailyLog[day];
       });
       saveState(state);
