@@ -47,6 +47,17 @@
     h2 { font-size: 1rem; color: var(--muted); }
 
     .sub { color: var(--muted); font-size: 0.92rem; }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
 
     .row {
       display: grid;
@@ -205,7 +216,9 @@
       <h1>To-Do List</h1>
       <p class="sub">Minimal app, daily tracking, and next-day reminders for missed tasks.</p>
       <form id="taskForm" class="row">
+        <label for="taskInput" class="sr-only">Task title</label>
         <input id="taskInput" maxlength="180" placeholder="Add a task you need to do" required />
+        <label for="dueInput" class="sr-only">Due date</label>
         <input id="dueInput" type="date" />
         <button type="submit">Add Task</button>
       </form>
@@ -274,7 +287,12 @@
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return { tasks: [], dailyLog: {} };
         const parsed = JSON.parse(raw);
-        if (!Array.isArray(parsed.tasks) || typeof parsed.dailyLog !== 'object' || parsed.dailyLog === null) {
+        if (
+          !Array.isArray(parsed.tasks) ||
+          typeof parsed.dailyLog !== 'object' ||
+          parsed.dailyLog === null ||
+          Array.isArray(parsed.dailyLog)
+        ) {
           return { tasks: [], dailyLog: {} };
         }
         return parsed;
@@ -506,7 +524,7 @@
       URL.revokeObjectURL(url);
     });
 
-    dueInput.value = todayStr();
+    dueInput.value = '';
     render();
   </script>
 </body>
